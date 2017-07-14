@@ -13,7 +13,7 @@ searchVideosInDocument = function(){
                 tabs[0].id,
                 {file: "getVideos.js"},
         function(videos){
-            console.log(videos);
+            console.log("the vids: "+videos);
             doTheVidThing(videos);
         }
             );
@@ -23,15 +23,21 @@ searchVideosInDocument = function(){
 function addVideosToPopup(videos) {
     try {
         var len = videos.length;
-        var vidDivs = [];
+        var button = document.getElementById("findVideosButton");
+        var par = button.parentNode;
+        par.removeChild(button);
         for (v=0;v<len;v++){
-            vidDivs[v] = document.createElement("div");
-            vidDivs[v].class = "vid";
+            var vidDivs = document.createElement("div");
+            vidDivs.class = "vid";
             var videoTag = document.createElement("video");
-            videoTag.src = videos[v];
-            vidDivs[v].appendChild(videoTag);
+            videoTag.controls="controls";
+            var sourceTag = document.createElement("source");
+            sourceTag.src = videos[v];
+            sourceTag.type = "video/mp4";
+            videoTag.appendChild(sourceTag);
+            vidDivs.appendChild(videoTag);
+            document.body.appendChild(vidDivs);
         }
-        document.body.appendChild(vidDivs);
     }catch (err){
         console.log(err);
     }
@@ -45,9 +51,11 @@ function noVideosToPopup() {
 }
 
 function doTheVidThing(videos) {
-    if(videos.length == 0){
+    try{
+        videos[0].length;
+        addVideosToPopup(videos);
+    }catch (err){
+        console.log(err);
         noVideosToPopup();
-    }else{
-        addVideosToPopup();
     }
 }

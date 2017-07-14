@@ -34,13 +34,25 @@ function checkLinks(links) {
                 var http = new XMLHttpRequest();
                 http.open('HEAD', links[l], false);
                 http.send();
-                if(goodCode(http.status)){
-                    existing[l] = links[l];
-                    console.log(links[l]);
-                }
-            }catch (conn_err){
-                console.log(conn_err);
+            }catch (err){
                 continue;
+            }
+            if(goodCode(http.status)){
+                existing[l] = links[l];
+                console.log(links[l]);
+            }else{
+                if(http.status == 405){
+                    try{
+                        var http_get = new XMLHttpRequest();
+                        http_get.open('GET', links[l], false);
+                        http_get.send();
+                        if(goodCode(http_get.status)){
+                            existing[l] = links[l];
+                        }
+                    }catch (e){
+                        continue
+                    }
+                }
             }
         }
         return existing;
